@@ -1,0 +1,26 @@
+version: '3'
+services:
+  app:
+    image: golang:latest
+    volumes:
+      - /home/faceless/go/src/github.com/wedojava/gowebstudy:/go/src/github.com/wedojava/gowebstudy
+      - /home/faceless/go/src:/go/src
+    ports:
+      - "8080:8080"
+    # command: go get -u github.com/gorilla/mux
+    command: go run /go/src/github.com/wedojava/gowebstudy/lesson05/main.go
+  # The Database
+  database:
+    image: mysql:5.7
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      - "MYSQL_DATABASE=go_web"
+      - "MYSQL_USER=go_web"
+      - "MYSQL_PASSWORD=go_web"
+      - "MYSQL_ROOT_PASSWORD=secret"
+    ports:
+      - "33063:3306"
+
+volumes:
+  dbdata:
