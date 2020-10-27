@@ -1,9 +1,12 @@
 package handler
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -73,4 +76,24 @@ func DisplayPersonHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Fprintf(w, "Person: %+v", p)
+}
+
+func ReceiveFile(w http.ResponseWriter, r *http.Request) {
+	r.ParseMultipartForm(32 << 20) // 32M
+	var buf bytes.Buffer
+
+	file, header, err := r.FormFile("file")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	name := strings.Split(header.Filename, ".")
+	fmt.Printf("File name %s\n", name[0])
+
+	io.Copy(&buf, file)
+	contents := buf.String()
+	fmt.Println(contents)
+	buf.Reset()
+
+	return
 }
